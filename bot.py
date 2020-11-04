@@ -8,9 +8,9 @@ import subprocess
 import json
 import yaml
 import ruamel.yaml
+from secret import *
 from pprint import pprint
 from datetime import datetime
-from CREDENTIAL.py import token
 
 client = commands.Bot(command_prefix='?',owner_id=194422040227348480)
 
@@ -78,12 +78,11 @@ async def gen(ctx, *args):
 		data[f'{ctx.author.id}']['time'] = time
 		with open(f'{ctx.author.id}.yaml', 'w') as fp:
 			yaml.dump(data, fp)
-		print(3)
-		subprocess.call(['./app.py', '-c', f'{ctx.author.id}.yaml'])
+		subprocess.call([f'{GEN_PASS}/app.py', '-c', f'{ctx.author.id}.yaml'])
 		log = open("bot.log", "a")
 		log.write(f'?gen demander par {ctx.author}\n')
 		log.close()
-		await ctx.send(f"Attestation pour le {date} a {time}", file=discord.File(f'./{ctx.author.id}_attestation.pdf'))
+		await ctx.send(f"Attestation pour le {date} a {time}", file=discord.File(f'{GEN_PASS}/{ctx.author.id}_attestation.pdf'))
 		os.remove(f'{ctx.author.id}_attestation.pdf')
 @gen.error
 async def gen_error(ctx, error):
