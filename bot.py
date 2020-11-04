@@ -1,4 +1,5 @@
-# Work with Python 3.7
+#! /usr/bin/env python3
+
 import os
 import discord
 from discord.ext import commands
@@ -9,7 +10,7 @@ import yaml
 import ruamel.yaml
 from pprint import pprint
 from datetime import datetime
-from CREDENTIAL import token
+from CREDENTIAL.py import token
 
 client = commands.Bot(command_prefix='?',owner_id=194422040227348480)
 
