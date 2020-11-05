@@ -25,6 +25,7 @@ python3 ./bot.py
 
 `?gen <raison> <date> <heure>` générer à une autre date et heure
 
+`?delete` Supprime la configuration de l'utilisateur
 
 ### Installation
 
@@ -33,6 +34,8 @@ Faire bien attention aux locales et timezone pour générer date et heure de sor
 Chrome/Chromium ainsi que le `chromedriver` ou `chromium-driver` ou `chromium-chromedriver` doit etre installé.
 
 `$ apt-get install chromium chromium-driver chromium-l10n`
+
+ou
 
 `$ apt-get install chromium-browser chromium-chromedriver chromium-browser-l10n`
 
@@ -60,7 +63,3 @@ Créer un fichier config.py et y mettre :
 GEN_PATH = '<chemins vers le generateur>'
 TOKEN = '<token du bot>'
 ```
-
-## TODO
-
-`?del` pour supprimer sa configuration
