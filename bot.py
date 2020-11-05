@@ -9,8 +9,7 @@ import json
 import yaml
 import ruamel.yaml
 import re
-from secret import *
-from pprint import pprint
+from conf import *
 from datetime import datetime
 
 client = commands.Bot(command_prefix='?',owner_id=194422040227348480)
@@ -88,7 +87,7 @@ async def gen(ctx, reason, *args):
 		log = open("bot.log", "a")
 		log.write(f'?gen demander par {ctx.author}\n')
 		log.close()
-		await ctx.author.send(f"Attestation pour le {date} a {time}", file=discord.File(f'{GEN_PASS}/{ctx.author.id}_attestation.pdf'))
+		await ctx.author.send(f"Attestation pour le {date} a {time}", file=discord.File(f'{ctx.author.id}_attestation.pdf'))
 		os.remove(f'{ctx.author.id}_attestation.pdf')
 @gen.error
 async def gen_error(ctx, error):
@@ -97,7 +96,18 @@ async def gen_error(ctx, error):
 
 @client.command()
 @commands.dm_only()
-async def conf(ctx, fname, lname, birthday, POBirth, address, zip, city):
+async def conf(ctx, fname, lname, birthday, POBirth, address, zip, city, *args):
+	if (len(args) > 0):
+		await ctx.send('Trop d\'arguments, avez-vous bien mis des "" autour de l\'adresse ?\nExemple : `?conf Jean dujardin 19/06/1972 "Marne la Vallée" "74 avenue du general leclerc" 94400 "Vitry sur Seine"`')
+		return
+	try:
+		birthday = datetime.strptime(birthday, '%d/%m/%Y').strftime(f"%d/%m/%Y")
+	except ValueError:
+		await ctx.send("Anniversaire non valide. Format JJ/MM/AAAA")
+		return
+	if not zip.isnumeric():
+		await ctx.send("Code postal non valide")
+		return
 	data = {
 		f"{ctx.author.id}": {
 			"first_name": fname,
@@ -114,10 +124,11 @@ async def conf(ctx, fname, lname, birthday, POBirth, address, zip, city):
 	}
 	with open(f'{ctx.author.id}.yaml', "w") as file:
 		yaml.dump(data, file)
+	await ctx.send("Configuration sauvegarder")
 @conf.error
 async def conf_error(ctx, error):
 	if isinstance(error, commands.MissingRequiredArgument):
-		await ctx.send('?conf <prenom> <nom> <anniversaire dd/mm/yyyy> <lieu de naissance> <adresse> <code postal> <ville>\n`mettre des "" autour de l\'adresse : "74 avenue du general leclerc" 75012 Paris`')
+		await ctx.send('`?conf <prenom> <nom> <anniversaire jj/mm/aaaa> <lieu de naissance> <adresse> <code postal> <ville>`\nmettre des "" autour de l\'adresse et des villes si le nom est en plusieurs mots.\nExemple : `?conf Jean dujardin 19/06/1972 "Marne la Vallée" "74 avenue du general leclerc" 75012 "Vitry sur Seine"`')
 	if isinstance(error, commands.PrivateMessageOnly):
 		await ctx.send('Pour respecter votre vie priver merci d\'utiliser cette commande en message prive avec le bot')
 
