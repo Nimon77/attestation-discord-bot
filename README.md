@@ -15,18 +15,22 @@ python3 ./bot.py
 Faire bien attention aux locales et timezone pour générer date et heure de sortie /!\
 
 Chrome/Chromium ainsi que le `chromedriver` ou `chromium-driver` doit etre installé.
+
 `$ apt-get install chromium chromium-driver chromium-l10n`
 
 Installer les dépendances python
+
 `$ pip3 install -r requirements.txt`
 
 Creer le fichier `config.py` avec les informations de configuration.
 
 Cloner le generateur d'attestation de [@nirae](https://github.com/nirae) dans le dossier du bot ou a un autre endroit.
+
 `$ git clone https://github.com/nirae/generateur_attestation_sortie.git`
 
 Lancer le bot
-`./bot.py`
+
+`$ ./bot.py`
 
 ## Configuration
 
