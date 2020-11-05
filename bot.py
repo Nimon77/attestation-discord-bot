@@ -12,26 +12,20 @@ import re
 from conf import *
 from datetime import datetime
 
-client = commands.Bot(command_prefix='?',owner_id=194422040227348480)
-
-def check_auth(ctx):
-    return ctx.message.author.id == 194422040227348480 or ctx.message.author.id == 219193195978817536
+client = commands.Bot(command_prefix='?')
 
 @client.event
 async def on_ready():
-    global nimon, andy
-    log = open("bot.log", "w")
-    log.write('Logged in as\n')
-    log.write(f'{client.user.name}\n')
-    log.write(f'{client.user.id}\n')
-    log.write('------\n')
-    log.close()
-    game = discord.Game("?help")
-    await client.change_presence(status=discord.Status('online'),
-                                    activity=game,
-                                    afk=False)
-    nimon = await client.fetch_user(194422040227348480)
-    andy = await client.fetch_user(219193195978817536)
+	log = open("bot.log", "a")
+	log.write('Logged in as\n')
+	log.write(f'{client.user.name}\n')
+	log.write(f'{client.user.id}\n')
+	log.write('------\n')
+	log.close()
+	game = discord.Game("?help")
+	await client.change_presence(status=discord.Status('online'),
+									activity=game,
+									afk=False)
 
 @client.command()
 async def gen(ctx, reason, *args):
@@ -126,6 +120,9 @@ async def conf(ctx, fname, lname, birthday, POBirth, address, zip, city, *args):
 	}
 	with open(f'{ctx.author.id}.yaml', "w") as file:
 		yaml.dump(data, file)
+	log = open("bot.log", "a")
+	log.write(f'?conf executer par {ctx.author}\n')
+	log.close()
 	await ctx.send("Configuration sauvegarder")
 @conf.error
 async def conf_error(ctx, error):
@@ -135,7 +132,19 @@ async def conf_error(ctx, error):
 		await ctx.send('Pour respecter votre vie priver merci d\'utiliser cette commande en message prive avec le bot')
 		await ctx.author.send('ici pour le ?conf :)')
 
+@client.command()
+async def delete(ctx):
+	if os.path.exists(f'{ctx.author.id}.yaml'):
+		try:
+			os.remove(f'{ctx.author.id}.yaml')
+		except:
+			await ctx.send("Erreur lors de la suppression de la configuration contacter developpeur")
+			return
+		await ctx.send("Votre configuration a été supprimer")
+	else:
+		await ctx.send('Votre configuration n\'existe pas')
+
 try:
-    client.run(TOKEN)
+	client.run(TOKEN)
 finally:
-    exit()
+	exit()
