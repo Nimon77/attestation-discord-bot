@@ -36,7 +36,9 @@ async def on_ready():
 @client.command()
 async def gen(ctx, reason, *args):
 	if not (os.path.isfile(f'{ctx.author.id}.yaml')):
-		await ctx.send('Erreur : aucune configuration trouver, utiliser ?conf <prenom> <nom> <anniversaire jj/MM/AAAA> <lieu de naissance> <adresse> <code postal> <ville>\n`mettre des "" autour de l\'adresse : "74 avenue du general leclerc" 75012 Paris`')
+		await ctx.send('Erreur : aucune configuration trouver, utiliser ?conf en message privé avec le bot')
+		await ctx.author.send('utiliser `?conf` ici\n\n`?conf <prenom> <nom> <anniversaire jj/mm/aaaa> <lieu de naissance> <adresse> <code postal> <ville>`\nmettre des "" autour de l\'adresse et des villes si le nom est en plusieurs mots.\nExemple : `?conf Jean dujardin 19/06/1972 "Marne la Vallée" "74 avenue du general leclerc" 75012 "Vitry sur Seine"`')
+		return
 	else:
 		now = datetime.now()
 		year = now.strftime("%Y")
@@ -83,7 +85,7 @@ async def gen(ctx, reason, *args):
 		data[f'{ctx.author.id}']['time'] = time
 		with open(f'{ctx.author.id}.yaml', 'w') as fp:
 			yaml.dump(data, fp)
-		subprocess.call([f'{GEN_PASS}/app.py', '-c', f'{ctx.author.id}.yaml'])
+		subprocess.call([f'{GEN_PATH}/app.py', '-c', f'{ctx.author.id}.yaml'])
 		log = open("bot.log", "a")
 		log.write(f'?gen demander par {ctx.author}\n')
 		log.close()
@@ -131,6 +133,7 @@ async def conf_error(ctx, error):
 		await ctx.send('`?conf <prenom> <nom> <anniversaire jj/mm/aaaa> <lieu de naissance> <adresse> <code postal> <ville>`\nmettre des "" autour de l\'adresse et des villes si le nom est en plusieurs mots.\nExemple : `?conf Jean dujardin 19/06/1972 "Marne la Vallée" "74 avenue du general leclerc" 75012 "Vitry sur Seine"`')
 	if isinstance(error, commands.PrivateMessageOnly):
 		await ctx.send('Pour respecter votre vie priver merci d\'utiliser cette commande en message prive avec le bot')
+		await ctx.author.send('ici pour le ?conf :)')
 
 try:
     client.run(TOKEN)
