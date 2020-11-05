@@ -3,7 +3,7 @@ Ce bot discord utilise le [générateur d'attestation de sortie](https://github.
 
 Si vous souhaitez utiliser le bot sans l’héberger vous-même vous pouvez me contacter sur discord : Nimon#0077
 
-Ou utiliser ce lien d'invitation pour bot pour le mettre sur votre serveur : https://discord.com/oauth2/authorize?client_id=773161125230805002&scope=bot&permissions=257088
+Ou utiliser ce lien d'invitation pour le mettre sur votre serveur : https://discord.com/oauth2/authorize?client_id=773161125230805002&scope=bot&permissions=257088
 
 ## Utilisation
 ### Usage
