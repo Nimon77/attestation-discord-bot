@@ -97,9 +97,12 @@ async def conf(ctx, fname, lname, birthday, POBirth, address, zip, city, *args):
 		await ctx.send('Trop d\'arguments, avez-vous bien mis des "" autour de l\'adresse ?\nExemple : `?conf Jean dujardin 19/06/1972 "Marne la Vallée" "74 avenue du general leclerc" 94400 "Vitry sur Seine"`')
 		return
 	try:
-		birthday = datetime.strptime(birthday, '%d/%m/%Y').strftime(f"%d/%m/%Y")
+		birthday = datetime.strptime(birthday, '%d/%m/%Y').strftime('%d/%m/%Y')
 	except ValueError:
 		await ctx.send("Anniversaire non valide. Format JJ/MM/AAAA")
+		return
+	if (datetime.strptime(birthday, '%d/%m/%Y').strftime('%Y') < '1900'):
+		await ctx.send("Merci de mettre votre VRAIE date de naissance")
 		return
 	if not zip.isnumeric():
 		await ctx.send("Code postal non valide")
