@@ -38,6 +38,8 @@ async def gen(ctx, reason, *args):
 		year = now.strftime("%Y")
 		available_reasons = [
 			'achats',
+			'culte',
+			'culture',
 			'sante',
 			'famille',
 			'travail',
@@ -48,7 +50,7 @@ async def gen(ctx, reason, *args):
 			'enfants'
 		]
 		if reason not in available_reasons:
-			await ctx.send('Erreur : raison non valable\n```Raisons disponible :\nachats\nsante\nfamille\ntravail\nhandicap\nsports_animaux\nconvocation\nmissions\nenfants```')
+			await ctx.send('Erreur : raison non valable\n```Raisons disponible :\nachats\nculte\nculturel\nsante\nfamille\ntravail\nhandicap\nsports_animaux\nconvocation\nmissions\nenfants```')
 			return
 		size = len(args)
 		if (size == 1):
@@ -88,7 +90,7 @@ async def gen(ctx, reason, *args):
 @gen.error
 async def gen_error(ctx, error):
 	if isinstance(error, commands.MissingRequiredArgument):
-		await ctx.send('- `?gen <raison>` générer pour maintenant\n- `?gen <raison> <heure>` générer pour aujourd\'hui à une autre heure\n- `?gen <raison> <date> <heure>` générer à une autre date et heure\n```Raisons disponible :\nachats\nsante\nfamille\ntravail\nhandicap\nsports_animaux\nconvocation\nmissions\nenfants```')
+		await ctx.send('- `?gen <raison>` générer pour maintenant\n- `?gen <raison> <heure>` générer pour aujourd\'hui à une autre heure\n- `?gen <raison> <date> <heure>` générer à une autre date et heure\n```Raisons disponible :\nachats\nculte\nculturel\nsante\nfamille\ntravail\nhandicap\nsports_animaux\nconvocation\nmissions\nenfants```')
 
 @client.command()
 @commands.dm_only()
