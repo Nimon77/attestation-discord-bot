@@ -5,5 +5,4 @@ conf.py
 _*
 *.out
 app.py
-generateur_attestation_sortie/
 venv

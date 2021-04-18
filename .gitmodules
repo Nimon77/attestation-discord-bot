@@ -1,0 +1,3 @@
+[submodule "generateur_attestation_sortie"]
+	path = generateur_attestation_sortie
+	url = ./generateur_attestation_sortie

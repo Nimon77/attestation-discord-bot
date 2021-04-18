@@ -106,7 +106,9 @@ async def gen(ctx, reason, *args):
 				data[f'{ctx.author.id}']['context'] = "couvre-feu"
 			else:
 				data[f'{ctx.author.id}']['context'] = "confinement"
-
+		if not reason in available_curfew_reasons or not reason in available_quarantine_reasons:
+			await ctx.send("la raison '%s' n'est pas valable pendant le %s" % (reason, data[f'{ctx.author.id}']['context']))
+			return
 		if (size == 1):
 			try:
 				time = datetime.strptime(args[0], '%H:%M').strftime("%H:%M")
