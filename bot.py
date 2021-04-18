@@ -12,6 +12,55 @@ import re
 from conf import *
 from datetime import datetime
 
+available_reasons = [
+    'sante',
+    'famille',
+    'travail',
+    'handicap',
+    'animaux',
+    'convocation',
+    'missions',
+    'achats',
+    'sport',
+    'demarche',
+    'demenagement',
+    'culte-culturel',
+    'enfants'
+]
+
+
+available_curfew_reasons = {
+    'sante': 'checkbox-curfew-sante',
+    'famille': 'checkbox-curfew-famille',
+    'travail': 'checkbox-curfew-travail',
+    'handicap': 'checkbox-curfew-famille',
+    'animaux': 'checkbox-curfew-animaux',
+    'convocation': 'checkbox-curfew-convocation_demarches',
+    'missions': 'checkbox-curfew-travail'
+}
+
+available_quarantine_reasons = {
+    'sante': 'checkbox-quarantine-sante',
+    'famille': 'checkbox-quarantine-famille',
+    'travail': 'checkbox-quarantine-travail',
+    'handicap': 'checkbox-quarantine-famille',
+    'convocation': 'checkbox-quarantine-convocation_demarches',
+    'sport': 'checkbox-quarantine-sport',
+    'achats': 'checkbox-quarantine-achats_culte_culturel',
+    'enfants': 'checkbox-quarantine-famille',
+    'culte-culturel': 'checkbox-quarantine-achats_culte_culturel',
+    'demarche': 'checkbox-quarantine-convocation_demarches',
+    'demenagement': 'checkbox-quarantine-demenagement',
+    'animaux': 'checkbox-quarantine-sport',
+    'missions': 'checkbox-quarantine-travail'
+}
+
+
+available_context = {
+    'couvre-feu': 'curfew-button',
+    'confinement': 'quarantine-button'
+}
+
 client = commands.Bot(command_prefix='?')
 
 @client.event
@@ -31,28 +80,33 @@ async def on_ready():
 async def gen(ctx, reason, *args):
 	if not (os.path.isfile(f'{ctx.author.id}.yaml')):
 		await ctx.send('Erreur : aucune configuration trouver, utiliser ?conf en message privé avec le bot')
-		await ctx.author.send('utiliser `?conf` ici\n\n`?conf <prenom> <nom> <anniversaire jj/mm/aaaa> <lieu de naissance> <adresse> <code postal> <ville>`\nmettre des "" autour de l\'adresse et des villes si le nom est en plusieurs mots.\nExemple : `?conf Jean dujardin 19/06/1972 "Marne la Vallée" "74 avenue du general leclerc" 75012 "Vitry sur Seine"`')
+		await ctx.author.send('utiliser `?conf` ici\n\n`?conf <prenom> <nom> <anniversaire jj/mm/aaaa> <adresse> <code postal> <ville>`\nmettre des "" autour de l\'adresse et des villes si le nom est en plusieurs mots.\nExemple : `?conf Jean dujardin 19/06/1972 "74 avenue du general leclerc" 75012 "Vitry sur Seine"`')
 		return
 	else:
 		now = datetime.now()
 		year = now.strftime("%Y")
-		available_reasons = [
-			'achats',
-			'culte',
-			'culture',
-			'sante',
-			'famille',
-			'travail',
-			'handicap',
-			'sports_animaux',
-			'convocation',
-			'missions',
-			'enfants'
-		]
 		if reason not in available_reasons:
-			await ctx.send('Erreur : raison non valable\n```Raisons disponible :\nachats\nculte\nculturel\nsante\nfamille\ntravail\nhandicap\nsports_animaux\nconvocation\nmissions\nenfants```')
+			await ctx.send('Erreur : raison non valable\n```Raisons disponible :\n' + '\n'.join(available_reasons) + '```')
 			return
 		size = len(args)
+
+		msg = await ctx.send('1️⃣: couvre-feu\t2️⃣: confinement');
+		await msg.add_reaction("1️⃣")
+		await msg.add_reaction("2️⃣")
+		def check(reaction):
+			return reaction.user_id == ctx.author.id and reaction.message_id == msg.id and reaction.emoji.name in ['1️⃣', '2️⃣']
+		try:
+			reaction = await client.wait_for('raw_reaction_add', timeout=60.0, check=check)
+		except asyncio.TimeoutError:
+			return
+		else:
+			config = open(f'{ctx.author.id}.yaml')
+			data = yaml.load(config, Loader=yaml.FullLoader)
+			if reaction.emoji.name == '1️⃣':
+				data[f'{ctx.author.id}']['context'] = "couvre-feu"
+			else:
+				data[f'{ctx.author.id}']['context'] = "confinement"
+
 		if (size == 1):
 			try:
 				time = datetime.strptime(args[0], '%H:%M').strftime("%H:%M")
@@ -74,14 +128,12 @@ async def gen(ctx, reason, *args):
 		else:
 			date = now.strftime("%d/%m/%Y")
 			time = now.strftime("%H:%M")
-		config = open(f'{ctx.author.id}.yaml')
-		data = yaml.load(config, Loader=yaml.FullLoader)
 		data[f'{ctx.author.id}']['reason'] = reason
 		data[f'{ctx.author.id}']['date'] = date
 		data[f'{ctx.author.id}']['time'] = time
 		with open(f'{ctx.author.id}.yaml', 'w') as fp:
 			yaml.dump(data, fp)
-		subprocess.call([f'{GEN_PATH}/app.py', '-c', f'{ctx.author.id}.yaml'])
+		codeproc = subprocess.call(['python3', f'{GEN_PATH}/app.py', '-c', f'{ctx.author.id}.yaml'])
 		log = open("bot.log", "a")
 		log.write(f'?gen demander par {ctx.author}\n')
 		log.close()
@@ -90,14 +142,12 @@ async def gen(ctx, reason, *args):
 @gen.error
 async def gen_error(ctx, error):
 	if isinstance(error, commands.MissingRequiredArgument):
-		await ctx.send('- `?gen <raison>` générer pour maintenant\n- `?gen <raison> <heure>` générer pour aujourd\'hui à une autre heure\n- `?gen <raison> <date> <heure>` générer à une autre date et heure\n```Raisons disponible :\nachats\nculte\nculturel\nsante\nfamille\ntravail\nhandicap\nsports_animaux\nconvocation\nmissions\nenfants```')
+		await ctx.send('- `?gen <raison>` générer pour maintenant\n- `?gen <raison> <heure>` générer pour aujourd\'hui à une autre heure\n- `?gen <raison> <date> <heure>` générer à une autre date et heure\n```Raisons disponible :\n' + '\n'.join(available_reasons) + '```')
 
 @client.command()
 @commands.dm_only()
-async def conf(ctx, fname, lname, birthday, POBirth, address, zip, city, *args):
-	if (len(args) > 0):
-		await ctx.send('Trop d\'arguments, avez-vous bien mis des "" autour de l\'adresse ?\nExemple : `?conf Jean dujardin 19/06/1972 "Marne la Vallée" "74 avenue du general leclerc" 94400 "Vitry sur Seine"`')
-		return
+async def conf(ctx, fname, lname, birthday, address, zip, city, *args):
+	
 	try:
 		birthday = datetime.strptime(birthday, '%d/%m/%Y').strftime('%d/%m/%Y')
 	except ValueError:
@@ -114,7 +164,6 @@ async def conf(ctx, fname, lname, birthday, POBirth, address, zip, city, *args):
 			"first_name": fname,
 			"last_name": lname,
 			"birthday": birthday,
-			"placeofbirth": POBirth,
 			"address": address,
 			"zipcode": zip,
 			"city": city,
@@ -132,7 +181,7 @@ async def conf(ctx, fname, lname, birthday, POBirth, address, zip, city, *args):
 @conf.error
 async def conf_error(ctx, error):
 	if isinstance(error, commands.MissingRequiredArgument):
-		await ctx.send('`?conf <prenom> <nom> <anniversaire jj/mm/aaaa> <lieu de naissance> <adresse> <code postal> <ville>`\nmettre des "" autour de l\'adresse et des villes si le nom est en plusieurs mots.\nExemple : `?conf Jean dujardin 19/06/1972 "Marne la Vallée" "74 avenue du general leclerc" 75012 "Vitry sur Seine"`')
+		await ctx.send('`?conf <prenom> <nom> <anniversaire jj/mm/aaaa> <adresse> <code postal> <ville>`\nmettre des "" autour de l\'adresse et des villes si le nom est en plusieurs mots.\nExemple : `?conf Jean dujardin 19/06/1972 "74 avenue du general leclerc" 75012 "Vitry sur Seine"`')
 	if isinstance(error, commands.PrivateMessageOnly):
 		await ctx.send('Pour respecter votre vie priver merci d\'utiliser cette commande en message prive avec le bot')
 		await ctx.author.send('ici pour le ?conf :)')

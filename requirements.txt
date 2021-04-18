@@ -4,4 +4,4 @@ pyyaml
 marshmallow
 argparse
 discord
-ruamel
+ruamel.yaml
