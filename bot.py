@@ -90,7 +90,7 @@ async def gen(ctx, reason, *args):
 			return
 		size = len(args)
 
-		msg = await ctx.send('1️⃣: couvre-feu\t2️⃣: confinement');
+		msg = await ctx.send('1️⃣: Couvre-feu (19h-6h)\t2️⃣: Journée (6h-19h)');
 		await msg.add_reaction("1️⃣")
 		await msg.add_reaction("2️⃣")
 		def check(reaction):
