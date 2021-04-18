@@ -17,7 +17,9 @@ python3 ./bot.py
 
 #### Sur Discord :
 
-`?conf <prenom> <nom> <anniversaire jj/mm/aaaa> <lieu de naissance> <adresse> <code postal> <ville>` ⚠️ attention ⚠️ a bien mettre des `"` pour l'adresse et les villes si elles sont en plusieurs mots. Exemple : `?conf Jean dujardin 19/06/1972 "Marne la Vallée" "74 avenue du general leclerc" 75012 "Vitry sur Seine"`
+`?conf <prenom> <nom> <anniversaire jj/mm/aaaa> <lieu de naissance> <adresse> <code postal> <ville>`
+
+⚠️ attention ⚠️ a bien mettre des `"` pour l'adresse et les villes si elles sont en plusieurs mots. Exemple : `?conf Jean dujardin 19/06/1972 "Marne la Vallée" "74 avenue du general leclerc" 75012 "Vitry sur Seine"`
 
 `?gen <raison>` générer pour maintenant
 
