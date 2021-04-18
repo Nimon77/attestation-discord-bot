@@ -1,5 +1,5 @@
 # Bot discord generateur d'attestaion
-Ce bot discord utilise le [générateur d'attestation de sortie](https://github.com/nirae/generateur_attestation_sortie) de [@nirae](https://github.com/nirae) qui utilise le site officiel du gouvernement `media.interieur.gouv.fr/deplacement-covid-19/` pour générer des attestations
+Ce bot discord utilise le [générateur d'attestation de sortie](https://github.com/nirae/generateur_attestation_sortie) de [@nirae](https://github.com/nirae) qui utilise le site officiel du gouvernement `media.interieur.gouv.fr/attestation-deplacement-derogatoire-covid-19/` pour générer des attestations
 
 Si vous souhaitez utiliser le bot sans l’héberger vous-même vous pouvez me contacter sur discord : Nimon#0077
 
